@@ -1,0 +1,10 @@
+{
+  "agent_name": "memory",
+  "output": "You are a software quality engineer. Triage the failing test and identify the likely root cause.\n\nFailure log:\nAssertionError: expected status to be one of [paid, pending, failed], got settled. endpoint=/orders/4812 method=GET status_code=200\n\nContext:\nNo additional context provided.\n\nReturn: root cause, supporting evidence, and recommended next action.",
+  "retrieved_context": "Retrieved context:\n# Release Notes - 2026-05\n\nPayment status now includes a new terminal state: `settled`.\n\nTests, documentation, dashboards, and downstream validation rules should be updated anywhere they previously assumed only paid, pending, or failed.\n\n\n# Orders API Contract\n\nGET /orders/{id}\n\nResponse fields:\n- id: string\n- status: paid | pending | failed | settled\n- total: number\n- currency: ISO-4217 string\n\nThe `settled` status means payment has cleared and reconciliation is complete.\n\n\n# Support Ticket 4812\n\nSeveral automated tests began failing after the May release. The failures mention status `settled`. Users are not reporting production impact.\n\n\nMemory context:\nPrior incident: status enum changes often break downstream automated tests before production symptoms appear.",
+  "tools_called": [],
+  "retries": 0,
+  "latency_ms": 0,
+  "tokens_used": 47,
+  "agent": "memory"
+}

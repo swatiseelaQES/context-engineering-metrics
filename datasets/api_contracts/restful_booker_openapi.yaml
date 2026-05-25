@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: Restful Booker API
+  version: "1.0"
+  description: Contract used by the context-engineering-metrics demo to generate and validate API tests.
+servers:
+  - url: https://restful-booker.herokuapp.com
+paths:
+  /ping:
+    get:
+      operationId: healthCheck
+      summary: Verify the API is reachable
+      responses:
+        "201":
+          description: Created response used by Restful Booker ping endpoint
+  /auth:
+    post:
+      operationId: createToken
+      summary: Create an auth token for update and delete operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: password123
+      responses:
+        "200":
+          description: Token created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [token]
+                properties:
+                  token:
+                    type: string
+  /booking:
+    get:
+      operationId: getBookingIds
+      summary: Return booking IDs, optionally filtered by firstname, lastname, checkin, or checkout
+      parameters:
+        - in: query
+          name: firstname
+          schema: { type: string }
+        - in: query
+          name: lastname
+          schema: { type: string }
+        - in: query
+          name: checkin
+          schema: { type: string, format: date }
+        - in: query
+          name: checkout
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: Array of booking IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [bookingid]
+                  properties:
+                    bookingid: { type: integer }
+    post:
+      operationId: createBooking
+      summary: Create a booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      responses:
+        "200":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [bookingid, booking]
+                properties:
+                  bookingid: { type: integer }
+                  booking:
+                    $ref: '#/components/schemas/Booking'
+  /booking/{id}:
+    get:
+      operationId: getBooking
+      summary: Get one booking
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      responses:
+        "200":
+          description: Booking details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        "404":
+          description: Booking not found
+    put:
+      operationId: updateBooking
+      summary: Replace a booking. Requires token cookie or Basic auth.
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      responses:
+        "200":
+          description: Booking updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        "403":
+          description: Forbidden when auth is missing or invalid
+    patch:
+      operationId: partialUpdateBooking
+      summary: Partially update a booking. Requires token cookie or Basic auth.
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname: { type: string }
+                lastname: { type: string }
+                totalprice: { type: integer }
+                depositpaid: { type: boolean }
+                bookingdates:
+                  $ref: '#/components/schemas/BookingDates'
+                additionalneeds: { type: string }
+      responses:
+        "200":
+          description: Booking partially updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        "403":
+          description: Forbidden when auth is missing or invalid
+    delete:
+      operationId: deleteBooking
+      summary: Delete a booking. Requires token cookie or Basic auth.
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      responses:
+        "201":
+          description: Booking deleted
+        "403":
+          description: Forbidden when auth is missing or invalid
+components:
+  parameters:
+    BookingId:
+      in: path
+      name: id
+      required: true
+      schema: { type: integer }
+  schemas:
+    BookingDates:
+      type: object
+      required: [checkin, checkout]
+      properties:
+        checkin:
+          type: string
+          format: date
+          example: "2026-06-01"
+        checkout:
+          type: string
+          format: date
+          example: "2026-06-07"
+    Booking:
+      type: object
+      required: [firstname, lastname, totalprice, depositpaid, bookingdates]
+      properties:
+        firstname:
+          type: string
+          example: Jim
+        lastname:
+          type: string
+          example: Brown
+        totalprice:
+          type: integer
+          example: 111
+        depositpaid:
+          type: boolean
+          example: true
+        bookingdates:
+          $ref: '#/components/schemas/BookingDates'
+        additionalneeds:
+          type: string
+          example: Breakfast

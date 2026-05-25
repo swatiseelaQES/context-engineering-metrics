@@ -1,0 +1,6 @@
+agent,context_relevance_score,context_precision,has_unsupported_regression_claim,task_completion_score,needs_human_correction,tool_invocation_efficiency,retries,tokens_used
+baseline,0.0,0.0,False,0.6666666666666666,False,1.0,1,47
+rag,0.0,0.0,False,0.6666666666666666,False,1.0,0,47
+memory,0.0,0.0,False,0.6666666666666666,False,1.0,0,47
+tool,0.0,0.0,False,0.6666666666666666,False,1.0,0,47
+orchestration,0.0,0.0,False,0.6666666666666666,False,1.0,0,47

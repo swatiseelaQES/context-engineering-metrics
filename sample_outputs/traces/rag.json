@@ -1,0 +1,10 @@
+{
+  "agent_name": "rag",
+  "output": "You are a software quality engineer. Triage the failing test and identify the likely root cause.\n\nFailure log:\nAssertionError: expected status to be one of [paid, pending, failed], got settled. endpoint=/orders/4812 method=GET status_code=200\n\nContext:\nNo additional context provided.\n\nReturn: root cause, supporting evidence, and recommended next action.",
+  "retrieved_context": "# Release Notes - 2026-05\n\nPayment status now includes a new terminal state: `settled`.\n\nTests, documentation, dashboards, and downstream validation rules should be updated anywhere they previously assumed only paid, pending, or failed.\n\n\n# Orders API Contract\n\nGET /orders/{id}\n\nResponse fields:\n- id: string\n- status: paid | pending | failed | settled\n- total: number\n- currency: ISO-4217 string\n\nThe `settled` status means payment has cleared and reconciliation is complete.\n\n\n# Restful Booker Test Strategy\n\nThis demo generates API tests from the OpenAPI-style contract and runs them against `https://restful-booker.herokuapp.com`.\n\n## Scope\n\nGenerated tests should cover:\n\n1. Health check through `GET /ping`.\n2. Booking ID listing through `GET /booking`.\n3. Create/read/delete flow through `POST /booking`, `GET /booking/{id}`, and `DELETE /booking/{id}`.\n4. Auth token creation through `POST /auth`.\n5. Partial update through `PATCH /booking/{id}` when an auth token is available.\n6. Negative checks for invalid IDs or missing auth where useful.\n\n## Stability rules\n\nRestful Booker is a public practice API, so generated tests should avoid assuming any specific preloaded booking IDs. Tests should create their own booking when they need stable data.\n\n## SSL verification\n\nFor this demo, SSL verification is controlled by environment variables and defaults to `false`:\n\n- `RESTFUL_BOOKER_VERIFY_SSL=false`\n- `OPENAI_VERIFY_SSL=false`\n\nThis is intentionally configurable because some corporate machines intercept SSL traffic. Do not use disabled SSL verification as a production default.\n",
+  "tools_called": [],
+  "retries": 0,
+  "latency_ms": 0,
+  "tokens_used": 47,
+  "agent": "rag"
+}

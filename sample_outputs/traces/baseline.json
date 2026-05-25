@@ -1,0 +1,10 @@
+{
+  "agent": "baseline",
+  "response": "You are a software quality engineer. Triage the failing test and identify the likely root cause.\n\nFailure log:\nAssertionError: expected status to be one of [paid, pending, failed], got settled. endpoint=/orders/4812 method=GET status_code=200\n\nContext:\nNo additional context provided.\n\nReturn: root cause, supporting evidence, and recommended next action.",
+  "context_relevance_score": 0.0,
+  "task_completion_score": 0.666667,
+  "needs_human_correction": true,
+  "tool_invocation_efficiency": 0.0,
+  "retries": 1,
+  "tokens_used": 47
+}
