@@ -1,4 +1,25 @@
-def task_completion_score(output: str, expected_root_cause: str) -> float:
-    output_lower = output.lower()
-    required_terms = ["settled", "contract", "test"]
-    return sum(term in output_lower for term in required_terms) / len(required_terms)
+from shared.llm.embeddings import (
+    get_embedding,
+    cosine_similarity,
+)
+
+
+def task_completion_score(output, expected_root_cause):
+    """
+    Semantic similarity between:
+    - agent diagnosis
+    - expected diagnosis
+    """
+
+    if not output or not expected_root_cause:
+        return 0.0
+
+    output_embedding = get_embedding(output)
+    expected_embedding = get_embedding(expected_root_cause)
+
+    similarity = cosine_similarity(
+        output_embedding,
+        expected_embedding,
+    )
+
+    return round(similarity, 4)

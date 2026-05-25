@@ -1,22 +1,28 @@
-import time
-from shared.llm.client import OpenAITestGenerationClient
-from shared.llm.models import AgentResult
 from shared.llm.prompts import triage_prompt
-from shared.config import Settings
+from shared.observability.token_usage import workflow_tokens
+
 
 class BaselineAgent:
     name = "baseline"
 
     def run(self, task):
+        context = []
+        tool_calls = []
+
         response = triage_prompt(task)
 
+        tokens_used = workflow_tokens(
+            prompt=task,
+            context=context,
+            output=response,
+            tool_calls=tool_calls,
+        )
+
         return {
-            "agent": "baseline",
+            "agent": self.name,
             "response": response,
-            "context_relevance_score": 0.0,
-            "task_completion_score": 0.666667,
-            "needs_human_correction": True,
-            "tool_invocation_efficiency": 0.0,
+            "context": context,
+            "tool_calls": tool_calls,
             "retries": 1,
-            "tokens_used": len(response.split()),
+            "tokens_used": tokens_used,
         }
