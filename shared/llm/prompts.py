@@ -1,12 +1,22 @@
-def triage_prompt(task: dict, context: str = "") -> str:
+def test_generation_prompt(task: dict) -> str:
+    required_context = "\n".join(f"- {item}" for item in task.get("required_context", []))
+    success_criteria = "\n".join(f"- {item}" for item in task.get("success_criteria", []))
+
     return f"""
-You are a software quality engineer. Triage the failing test and identify the likely root cause.
+Generate pytest API tests for the following API workflow.
 
-Failure log:
-{task['failure_log']}
+Goal:
+{task.get("goal", "")}
 
-Context:
-{context or 'No additional context provided.'}
+Base URL:
+{task.get("base_url", "")}
 
-Return: root cause, supporting evidence, and recommended next action.
+Endpoint:
+{task.get("endpoint", "")}
+
+Required context:
+{required_context}
+
+Success criteria:
+{success_criteria}
 """.strip()

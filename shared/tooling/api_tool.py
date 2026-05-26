@@ -36,7 +36,17 @@ class RestfulBookerClient:
         kwargs.setdefault("verify", self.verify_ssl)
         kwargs.setdefault("timeout", 30)
         return requests.request(method, url, **kwargs)
+    def get(self, path: str, **kwargs: Any) -> Response:
+        return self.request("GET", path, **kwargs)
 
+    def post(self, path: str, **kwargs: Any) -> Response:
+        return self.request("POST", path, **kwargs)
+
+    def patch(self, path: str, **kwargs: Any) -> Response:
+        return self.request("PATCH", path, **kwargs)
+
+    def delete(self, path: str, **kwargs: Any) -> Response:
+        return self.request("DELETE", path, **kwargs)
     def ping(self) -> Response:
         return self.request("GET", "/ping")
 
@@ -76,6 +86,8 @@ class RestfulBookerClient:
             json=payload,
             headers={"Content-Type": "application/json", "Cookie": f"token={token}"},
         )
+
+
 
 def is_valid_status(actual_status: int, expected_status: int) -> bool:
         return actual_status == expected_status

@@ -58,20 +58,6 @@ Add your OpenAI API key to `.env`, or export it in your shell:
 export OPENAI_API_KEY=your_key_here
 ```
 
-Then run the API test generation workflow:
-
-```bash
-python experiments/api_test_generation_workflow.py
-```
-
-Outputs are written to:
-
-```text
-generated_tests/test_restful_booker_generated.py
-sample_outputs/api_test_runs/latest_pytest_output.txt
-sample_outputs/api_test_runs/latest_metrics.json
-```
-
 If no `OPENAI_API_KEY` is available, the repo uses a deterministic fallback test template. This keeps the orchestration and metrics demo runnable in CI.
 
 ## SSL verification

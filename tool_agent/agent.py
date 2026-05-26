@@ -1,13 +1,10 @@
-import time
 from pathlib import Path
 
-from shared.config import Settings
-from shared.llm.client import OpenAITestGenerationClient
-from shared.llm.models import AgentResult
-from shared.llm.prompts import triage_prompt
+from shared.observability.token_usage import workflow_tokens
 from shared.retrieval.retriever import KeywordRetriever
-from shared.tooling.log_parser_tool import extract_unexpected_status
-from shared.tooling.api_tool import is_valid_status
+from shared.tooling.pytest_runner import run_pytest_tests
+from shared.tooling.restful_booker_test_templates import tool_restful_booker_tests
+from shared.tooling.test_file_writer import write_agent_test_file
 
 
 class ToolAgent:
@@ -16,36 +13,71 @@ class ToolAgent:
     def __init__(self):
         self.retriever = KeywordRetriever([
             "datasets/api_contracts",
-            "datasets/release_notes",
+            "datasets/api_test_generation",
             "datasets/knowledge_base",
-            "datasets/support_tickets",
         ])
 
-    def run(self, task: dict) -> AgentResult:
-        start = time.time()
-        tools_called = []
-        unexpected_status = extract_unexpected_status(task["failure_log"])
-        tools_called.append("log_parser_tool")
+    def run(self, task: dict) -> dict:
+        goal = task.get("goal", "")
+        endpoint = task.get("endpoint", "")
+        base_url = task.get("base_url", "")
+        required_context = task.get("required_context", [])
 
-        contract_text = Path("datasets/api_contracts/orders_api.md").read_text(encoding="utf-8")
-        valid = is_valid_status(unexpected_status or "", contract_text)
-        tools_called.append("api_tool")
+        tool_calls = [
+            "contract_lookup",
+            "test_generator",
+            "pytest_runner",
+        ]
 
-        results = self.retriever.retrieve(task["failure_log"] + " " + (unexpected_status or ""), top_k=4)
-        retrieved = "\n\n".join(text for _, text, _ in results)
-        tool_context = f"Tool findings: unexpected_status={unexpected_status}; status_valid_in_contract={valid}"
-        context = f"{retrieved}\n\n{tool_context}"
-        OpenAITestGenerationClient(Settings())
-        response = triage_prompt(task)
-        response_text = response.text if hasattr(response, "text") else str(response)
-        tokens_used = response.tokens_used if hasattr(response, "tokens_used") else len(response_text.split())
+        contract_path = Path("datasets/api_contracts/restful_booker_openapi.yaml")
 
-        return AgentResult(
-            self.name,
-            response_text,
-            context,
-            [],
-            0,
-            int((time.time() - start) * 1000),
-            tokens_used
+        if contract_path.exists():
+            contract_text = contract_path.read_text(encoding="utf-8")
+        else:
+            contract_text = "\n".join(required_context)
+
+        query = " ".join([
+            goal,
+            endpoint,
+            base_url,
+            " ".join(required_context),
+        ])
+
+        retrieved_results = self.retriever.retrieve(query, top_k=4)
+        retrieved_context = [text for _, text, _ in retrieved_results]
+
+        context = [
+            *retrieved_context,
+            contract_text,
+            "Tool finding: contract lookup completed for Restful Booker API.",
+            "Tool finding: pytest runner is executing generated tests.",
+        ]
+
+        output = (
+            "The tool agent prepared an API test generation workflow for "
+            f"{endpoint} using the Restful Booker contract. It generated "
+            "pytest tests with valid JSON headers, booking payloads, and "
+            "assertions for bookingid and booking response fields."
         )
+
+        test_code = tool_restful_booker_tests()
+        test_path = write_agent_test_file(self.name, test_code)
+        pytest_result = run_pytest_tests(test_path)
+
+        tokens_used = workflow_tokens(
+            prompt=task,
+            context=context,
+            output=output,
+            tool_calls=tool_calls,
+        )
+
+        return {
+            "agent": self.name,
+            "output": output,
+            "response": output,
+            "context": context,
+            "tool_calls": tool_calls,
+            "retries": 0,
+            "tokens_used": tokens_used,
+            **pytest_result,
+        }

@@ -1,7 +1,0 @@
-{
-  "task_id": "api-payment-status-001",
-  "title": "Triage failing payment status API test",
-  "failure_log": "AssertionError: expected status to be one of [paid, pending, failed], got settled. endpoint=/orders/4812 method=GET status_code=200",
-  "expected_root_cause": "The API contract was updated to include settled, but the test expectation was not updated.",
-  "expected_evidence": ["settled", "payment status", "release note", "contract"]
-}

@@ -1,8 +1,15 @@
 {
   "agent": "baseline",
-  "response": "You are a software quality engineer. Triage the failing test and identify the likely root cause.\n\nFailure log:\nAssertionError: expected status to be one of [paid, pending, failed], got settled. endpoint=/orders/4812 method=GET status_code=200\n\nContext:\nNo additional context provided.\n\nReturn: root cause, supporting evidence, and recommended next action.",
+  "output": "Generate basic pytest API tests for the requested endpoint. The tests should send a request and check the response.",
+  "response": "Generate basic pytest API tests for the requested endpoint. The tests should send a request and check the response.",
   "context": [],
   "tool_calls": [],
   "retries": 1,
-  "tokens_used": 194
+  "tokens_used": 237,
+  "pytest_exit_code": 0,
+  "pytest_output": ".                                                                        [100%]\n1 passed in 0.51s",
+  "execution_duration_ms": 5404,
+  "tests_collected": 1,
+  "tests_passed": 1,
+  "tests_failed": 0
 }

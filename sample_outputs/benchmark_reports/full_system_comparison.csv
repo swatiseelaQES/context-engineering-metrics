@@ -1,6 +1,6 @@
-agent,context_relevance_score,context_precision,has_unsupported_regression_claim,task_completion_score,needs_human_correction,tool_invocation_efficiency,retries,tokens_used
-baseline,0.0,0.0,False,0.2898,False,1.0,1,194
-rag,0.0,0.0,False,0.2898,False,1.0,0,47
-memory,0.0,0.0,False,0.2897,False,1.0,0,47
-tool,0.0,0.0,False,0.2897,False,1.0,0,47
-orchestration,0.0,0.0,False,0.2898,False,1.0,0,47
+agent,context_relevance_score,task_completion_score,execution_success_score,needs_human_correction,tool_invocation_efficiency,tests_collected,tests_passed,tests_failed,pytest_exit_code,retries,tokens_used
+baseline,0.0,0.5,1.0,True,0.0,1,1,0,0,1,237
+rag,1.0,1.0,0.0,False,1.0,0,0,0,2,0,985
+memory,1.0,0.5,0.0,True,0.9,0,0,0,2,0,971
+tool,1.0,0.75,0.0,False,1.0,0,0,0,2,0,2065
+orchestration,1.0,0.75,0.0,False,1.1333,0,0,0,2,0,2153

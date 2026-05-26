@@ -1,0 +1,28 @@
+{
+  "task_id": "RB-GEN-001",
+  "title": "Generate pytest API tests for Restful Booker create booking",
+  "goal": "Generate executable pytest tests for POST /booking using the Restful Booker API contract.",
+  "endpoint": "POST /booking",
+  "base_url": "https://restful-booker.herokuapp.com",
+
+  "required_context": [
+    "Restful Booker POST /booking endpoint",
+    "Create booking requires firstname, lastname, totalprice, depositpaid, bookingdates, and additionalneeds",
+    "bookingdates requires checkin and checkout",
+    "Request header Content-Type should be application/json",
+    "Successful create booking response includes bookingid and booking"
+  ],
+
+  "expected_tools": [
+    "contract_lookup",
+    "test_generator",
+    "pytest_runner"
+  ],
+
+  "success_criteria": [
+    "pytest test file is generated",
+    "tests are collected by pytest",
+    "generated tests execute against Restful Booker",
+    "at least one create booking test passes"
+  ]
+}
