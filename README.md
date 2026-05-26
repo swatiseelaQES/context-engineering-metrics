@@ -104,18 +104,12 @@ experiments             comparison and API workflow scripts
 |---|---|
 | Context relevance score | Whether the workflow used the right contract and strategy context |
 | Task completion score | Whether generated tests ran successfully |
-| Human correction flag | Whether generated tests failed and need intervention |
 | Tool invocation efficiency | Whether orchestration invoked generation and pytest correctly |
 | Tests collected | Number of pytest tests discovered |
 | Tests passed / failed | Execution result quality |
 | Tokens used | Estimated prompt + context + generated-code size |
 | Duration | End-to-end workflow runtime |
 
-## Suggested article tie-in
-
-This repo supports the article:
-
-**Measuring Context Engineering: Metrics for AI Workflow Maturity**
 
 Core argument:
 
